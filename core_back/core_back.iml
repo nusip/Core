@@ -14,17 +14,7 @@
           <root url="file://$MODULE_DIR$/libs" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="jar://$USER_HOME$/.ideaLibSources/hibernate-core-5.0.6.Final-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/hibernate-jpa-2.1-api-1.0.0.Final-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/reflections-0.9.10-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/gson-2.5-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/jsoup-1.8.3-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/mysql-connector-java-5.1.26-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/annotations-3.0.1u2-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/flyway-core-3.2.1-sources.jar!/" />
-          <root url="jar://$USER_HOME$/.ideaLibSources/jboss-logging-3.3.0.Final-sources.jar!/" />
-        </SOURCES>
+        <SOURCES />
         <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
       </library>
     </orderEntry>
