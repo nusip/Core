@@ -43,7 +43,7 @@ public final class DIServerCore {
         this.config = config;
         reflections = new Reflections(
                 new ConfigurationBuilder()
-                        .forPackages("kz.maks.core.back", config.basePackage())
+                        .forPackages("kz.maks")
                         .addScanners(new FieldAnnotationsScanner(), new SubTypesScanner())
         );
     }
@@ -52,7 +52,7 @@ public final class DIServerCore {
         try {
             migrateDB();
 
-            LocateRegistry.createRegistry(config.rmiRegistryPort());
+            LocateRegistry.createRegistry(config.rmiLocalPort());
 
             initializeHibernate();
             initializeComponents();
@@ -64,17 +64,8 @@ public final class DIServerCore {
     }
 
     private void migrateDB() {
-        Configuration configuration = new Configuration();
-        configuration.configure(config.hibernateConfigFileName());
-
         Flyway flyway = new Flyway();
-
-        flyway.setDataSource(
-                configuration.getProperty("connection.url"),
-                configuration.getProperty("connection.username"),
-                configuration.getProperty("connection.password")
-        );
-
+        flyway.setDataSource(config.dbURL(), config.dbUsername(), config.dbPassword());
         flyway.migrate();
     }
 
@@ -101,7 +92,10 @@ public final class DIServerCore {
 
     private void initializeHibernate() throws NoSuchFieldException, IllegalAccessException {
         Configuration configuration = new Configuration();
-        configuration.configure(config.hibernateConfigFileName());
+        configuration.configure();
+        configuration.setProperty("hibernate.connection.url", config.dbURL());
+        configuration.setProperty("hibernate.connection.username", config.dbUsername());
+        configuration.setProperty("hibernate.connection.password", config.dbPassword());
 
         Set<Class<?>> entityClasses = reflections.getTypesAnnotatedWith(Entity.class);
 
@@ -165,7 +159,7 @@ public final class DIServerCore {
         if (remote.getClass().getInterfaces().length != 1) {
             throw new RuntimeException("Remote class must implement exactly one interface");
         }
-        Naming.rebind("//localhost:" + config.rmiRegistryPort() + "/"
+        Naming.rebind("//localhost:" + config.rmiLocalPort() + "/"
                 + remote.getClass().getInterfaces()[0].getSimpleName(), (java.rmi.Remote) remote);
     }
 

@@ -2,10 +2,12 @@ package kz.maks.core.back;
 
 public interface IServerConfig {
 
-    String basePackage();
+    int rmiLocalPort();
 
-    String hibernateConfigFileName();
+    String dbURL();
 
-    int rmiRegistryPort();
+    String dbUsername();
+
+    String dbPassword();
 
 }

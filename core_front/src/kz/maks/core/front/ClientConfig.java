@@ -1,21 +1,19 @@
 package kz.maks.core.front;
 
+import kz.maks.core.shared.Props;
+
 public class ClientConfig implements IClientConfig {
-    private final String backendHost;
     private final Class<?> remoteStoreClass;
     private final boolean cacheTrees;
-    private final int rmiRegistryPort;
 
-    public ClientConfig(String backendHost, Class<?> remoteStoreClass, boolean cacheTrees, int rmiRegistryPort) {
-        this.backendHost = backendHost;
+    public ClientConfig(Class<?> remoteStoreClass, boolean cacheTrees) {
         this.remoteStoreClass = remoteStoreClass;
         this.cacheTrees = cacheTrees;
-        this.rmiRegistryPort = rmiRegistryPort;
     }
 
     @Override
-    public String backendHost() {
-        return backendHost;
+    public String rmiRemoteHost() {
+        return Props.get("rmi.remote.host");
     }
 
     @Override
@@ -29,7 +27,7 @@ public class ClientConfig implements IClientConfig {
     }
 
     @Override
-    public int rmiRegistryPort() {
-        return rmiRegistryPort;
+    public int rmiRemotePort() {
+        return Integer.parseInt(Props.get("rmi.remote.port"));
     }
 }

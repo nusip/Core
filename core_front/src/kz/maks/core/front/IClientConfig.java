@@ -2,12 +2,12 @@ package kz.maks.core.front;
 
 public interface IClientConfig {
 
-    String backendHost();
+    String rmiRemoteHost();
+
+    int rmiRemotePort();
 
     Class<?> remoteStoreClass();
 
     boolean cacheTrees();
-
-    int rmiRegistryPort();
 
 }

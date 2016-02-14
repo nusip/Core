@@ -62,7 +62,7 @@ public abstract class BaseClient {
 
     private <T extends Remote> T getRemote(Class<T> iface) {
         try {
-            return (T) Naming.lookup("//" + config.backendHost() + ":" + config.rmiRegistryPort() + "/" + iface.getSimpleName());
+            return (T) Naming.lookup("//" + config.rmiRemoteHost() + ":" + config.rmiRemotePort() + "/" + iface.getSimpleName());
 
         } catch (NotBoundException | MalformedURLException | RemoteException e) {
             throw new RuntimeException(e);

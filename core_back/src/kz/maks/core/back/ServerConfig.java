@@ -1,29 +1,27 @@
 package kz.maks.core.back;
 
+import kz.maks.core.shared.Props;
+
 public class ServerConfig implements IServerConfig {
-    private final String basePackage;
-    private final String hibernateConfigFileName;
-    private final int rmiRegistryPort;
 
-    public ServerConfig(String basePackage, String hibernateConfigFileName, int rmiRegistryPort) {
-        this.basePackage = basePackage;
-        this.hibernateConfigFileName = hibernateConfigFileName;
-        this.rmiRegistryPort = rmiRegistryPort;
+    @Override
+    public int rmiLocalPort() {
+        return Integer.parseInt(Props.get("rmi.local.port"));
     }
 
     @Override
-    public String basePackage() {
-        return basePackage;
+    public String dbURL() {
+        return Props.get("db.url");
     }
 
     @Override
-    public String hibernateConfigFileName() {
-        return hibernateConfigFileName;
+    public String dbUsername() {
+        return Props.get("db.username");
     }
 
     @Override
-    public int rmiRegistryPort() {
-        return rmiRegistryPort;
+    public String dbPassword() {
+        return Props.get("db.password");
     }
 
 }

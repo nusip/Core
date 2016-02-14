@@ -33,8 +33,6 @@ public class Utils {
     public static final int ONE_HOUR = 1000 * 60 * 60;
     public static final int ONE_DAY = ONE_HOUR * 24;
 
-    public static final int DEFAULT_RMI_REGISTRY_PORT = 1099;
-
     public static <T extends HasTitle> String[] extractTitles(T[] columns) {
         String[] titles = new String[columns.length];
 
