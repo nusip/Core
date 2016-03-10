@@ -65,11 +65,11 @@ public class BasicDialog {
         ui.setResizable(false);
         ui.setVisible(false);
 
-        ui.addKeyListener(new KeyAdapter() {
+        ui.getRootPane().registerKeyboardAction(new ActionListener() {
             @Override
-            public void keyTyped(KeyEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 ui.setVisible(false);
             }
-        });
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }
 }

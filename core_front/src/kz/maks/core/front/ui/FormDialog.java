@@ -1,6 +1,7 @@
 package kz.maks.core.front.ui;
 
 import com.google.common.base.Joiner;
+import kz.maks.core.front.validation.AbstractForm;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,9 +10,9 @@ import java.awt.event.ActionListener;
 
 public class FormDialog<T> extends BasicDialog {
 
-    public final Form<T> form;
+    public final AbstractForm<T> form;
 
-    public FormDialog(Frame parent, Form<T> form) {
+    public FormDialog(Frame parent, AbstractForm<T> form) {
         super(parent, form.ui, null);
         this.form = form;
     }

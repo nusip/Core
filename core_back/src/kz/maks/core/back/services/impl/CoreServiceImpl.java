@@ -1,20 +1,27 @@
 package kz.maks.core.back.services.impl;
 
-import kz.maks.core.back.TreeEntities;
+import kz.maks.core.back.Registry;
 import kz.maks.core.back.annotations.Service;
+import kz.maks.core.back.entities.AbstractBaseEntity;
+import kz.maks.core.back.entities.AbstractUserEntity;
 import kz.maks.core.back.services.CoreService;
+import kz.maks.core.shared.PasswordUtils;
 import kz.maks.core.shared.Utils;
+import kz.maks.core.shared.models.Combo;
+import kz.maks.core.shared.models.ICombo;
 import kz.maks.core.shared.models.ITreeNode;
 import kz.maks.core.shared.models.TreeNode;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.reflections.ReflectionUtils;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static kz.maks.core.back.entities.AbstractUserEntity.CREDENTIALS_FIELD;
+import static kz.maks.core.back.entities.AbstractUserEntity.IDENTIFIER_FIELD;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNull;
 import static org.hibernate.criterion.Restrictions.or;
@@ -26,12 +33,20 @@ public class CoreServiceImpl extends AbstractServiceImpl implements CoreService 
     public Map<String, List<ITreeNode>> getTrees() {
         Map<String, List<ITreeNode>> trees = new HashMap<>();
 
-        for (Class treeEntityClass : TreeEntities.get()) {
+        for (Class treeEntityClass : Registry.trees()) {
             List<ITreeNode> tree = getTree(treeEntityClass);
             trees.put(treeEntityClass.getSimpleName(), tree);
         }
 
         return trees;
+    }
+
+    @Override
+    public boolean login(String identifier, String credentials) {
+        String hash = PasswordUtils.getPasswordHash(credentials);
+        AbstractUserEntity user = (AbstractUserEntity) session().createCriteria(Registry.userEntityName())
+                .add(eq(IDENTIFIER_FIELD, identifier)).add(eq(CREDENTIALS_FIELD, hash)).uniqueResult();
+        return user != null;
     }
 
     private List<ITreeNode> getTree(Class<? extends ITreeNode> treeEntityClass) {
@@ -63,6 +78,30 @@ public class CoreServiceImpl extends AbstractServiceImpl implements CoreService 
         }
 
         return new TreeNode(treeNode.getId(), treeNode.getName(), children);
+    }
+
+    @Override
+    public Map<String, List<ICombo>> getCombos() {
+        Map<String, List<ICombo>> comboMap = new HashMap<>();
+
+        for (Class comboEntityClass : Registry.combos()) {
+            List<ICombo> comboList = getCombo(comboEntityClass);
+            comboMap.put(comboEntityClass.getSimpleName(), comboList);
+        }
+
+        return comboMap;
+    }
+
+    private List<ICombo> getCombo(Class<? extends ICombo> comboEntityClass) {
+        List<ICombo> combos = session().createCriteria(comboEntityClass).list();
+        List<ICombo> copies = new ArrayList<>();
+
+        for (ICombo combo : combos) {
+            Combo copy = new Combo(combo.getId(), combo.title());
+            copies.add(copy);
+        }
+
+        return copies;
     }
 
 }

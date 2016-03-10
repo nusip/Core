@@ -22,8 +22,8 @@ public abstract class BaseClient {
             lookupRemotes(CoreRemotes.class);
             lookupRemotes(config.remoteStoreClass());
 
-            if (config.cacheTrees()) {
-                Cache.cacheTrees();
+            if (config.useCache()) {
+                Cache.cache();
             }
 
             afterInit();

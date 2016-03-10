@@ -3,6 +3,7 @@ package kz.maks.core.back.services.remotes;
 import kz.maks.core.back.annotations.Inject;
 import kz.maks.core.back.annotations.Remote;
 import kz.maks.core.back.services.CoreService;
+import kz.maks.core.shared.models.ICombo;
 import kz.maks.core.shared.models.ITreeNode;
 import kz.maks.core.shared.remotes.CoreRemote;
 
@@ -24,6 +25,16 @@ public class CoreRemoteImpl extends AbstractRemoteImpl implements CoreRemote {
     public Map<String, List<ITreeNode>> getTrees() throws RemoteException {
         Map<String, List<ITreeNode>> trees = coreService.getTrees();
         return trees;
+    }
+
+    @Override
+    public Map<String, List<ICombo>> getCombos() throws RemoteException {
+        return coreService.getCombos();
+    }
+
+    @Override
+    public boolean login(String identifier, String password) throws RemoteException {
+        return coreService.login(identifier, password);
     }
 
 }

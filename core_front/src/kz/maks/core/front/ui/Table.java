@@ -1,6 +1,7 @@
 package kz.maks.core.front.ui;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import kz.maks.core.shared.Utils;
 import kz.maks.core.shared.models.Accessor;
 
@@ -24,6 +25,8 @@ public class Table<T> implements Accessor<List<T>> {
     private final Class<T> clazz;
     private final List<T> rows = new ArrayList<>();
 
+    private static final String ROW_NUMBER_COL_NAME = "rowNumber";
+
     public Table(IColumn<T>[] columns) {
         this.columns = columns;
         clazz = columns[0].tableClass();
@@ -32,9 +35,35 @@ public class Table<T> implements Accessor<List<T>> {
         ui.setFillsViewportHeight(true);
         ui.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        model.setColumnIdentifiers(columns);
+        model.setColumnIdentifiers(getColsWithRowNumbering(columns));
 
         ui.setModel(model);
+    }
+
+    private Object[] getColsWithRowNumbering(IColumn<T>[] columns) {
+        ArrayList<IColumn<T>> cols = Lists.newArrayList(columns);
+        cols.add(0, new IColumn<T>() {
+            @Override
+            public Class<T> tableClass() {
+                return null;
+            }
+
+            @Override
+            public String name() {
+                return ROW_NUMBER_COL_NAME;
+            }
+
+            @Override
+            public String title() {
+                return "№";
+            }
+
+            @Override
+            public String toString() {
+                return title();
+            }
+        });
+        return cols.toArray();
     }
 
     public T getSelected() {
@@ -66,13 +95,17 @@ public class Table<T> implements Accessor<List<T>> {
 
         model.setRowCount(0);
 
+        int rowNumber = 1;
+
         for (T t : list) {
-            addRow(t);
+            addRow(t, rowNumber++);
         }
     }
 
-    private void addRow(T t) {
+    private void addRow(T t, int rowNumber) {
         List<String> cells = new ArrayList<>();
+
+        cells.add(rowNumber + "");
 
         for (IColumn<T> column : columns) {
             Object value = Utils.invokeMethod(t, clazz, Utils.getterName(column.name()));

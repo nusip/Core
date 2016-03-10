@@ -4,8 +4,11 @@ import com.google.common.base.Predicate;
 import kz.maks.core.back.annotations.*;
 import kz.maks.core.back.annotations.Remote;
 import kz.maks.core.back.db.hibernate.Hibernate;
+import kz.maks.core.back.entities.AbstractBaseEntity;
+import kz.maks.core.back.entities.AbstractUserEntity;
 import kz.maks.core.back.jobs.IJob;
 import kz.maks.core.back.services.ServiceProxyFactory;
+import kz.maks.core.shared.models.ICombo;
 import kz.maks.core.shared.models.ITreeNode;
 import org.flywaydb.core.Flyway;
 import org.hibernate.SessionFactory;
@@ -37,6 +40,7 @@ public final class DIServerCore {
     private final Map<Object, Object> beanToProxy = new HashMap<>();
     private final List<Thread> jobThreads = new ArrayList<>();
     private final List<Class> treeEntities = new ArrayList<>();
+    private final List<Class> comboEntities = new ArrayList<>();
     private final IServerConfig config;
 
     public DIServerCore(IServerConfig config) {
@@ -50,7 +54,8 @@ public final class DIServerCore {
 
     void init() {
         try {
-            migrateDB();
+            // TODO uncomment
+//            migrateDB();
 
             LocateRegistry.createRegistry(config.rmiLocalPort());
 
@@ -105,9 +110,19 @@ public final class DIServerCore {
             if (Arrays.asList(entityClass.getInterfaces()).contains(ITreeNode.class)) {
                 treeEntities.add(entityClass);
             }
-
-            setTreeEntities(treeEntities.toArray(new Class[] {}));
+            if (ICombo.class.isAssignableFrom(entityClass)) {
+                comboEntities.add(entityClass);
+            }
+            if (AbstractUserEntity.class.isAssignableFrom(entityClass)) {
+                if (Registry.userEntityName() != null) {
+                    throw new RuntimeException("User entity name is already assigned");
+                }
+                Registry.setUserEntityName((Class<? extends AbstractBaseEntity>) entityClass);
+            }
         }
+
+        Registry.setTrees(treeEntities.toArray(new Class[] {}));
+        Registry.setCombos(comboEntities.toArray(new Class[] {}));
 
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
                 .applySettings(configuration.getProperties()).build();
@@ -117,23 +132,6 @@ public final class DIServerCore {
             List list = new ArrayList();
             list.add(Hibernate.getSessionFactory());
             beans.put(SessionFactory.class, list);
-        }
-    }
-
-    private void setTreeEntities(Class[] treeEntityClasses) throws NoSuchFieldException, IllegalAccessException {
-        // TODO possibly need refactoring
-        Field field = TreeEntities.class.getDeclaredField("trees");
-
-        boolean wasNotAccessible = !field.isAccessible();
-
-        if (wasNotAccessible) {
-            field.setAccessible(true);
-        }
-
-        field.set(null, treeEntityClasses);
-
-        if (wasNotAccessible) {
-            field.setAccessible(false);
         }
     }
 

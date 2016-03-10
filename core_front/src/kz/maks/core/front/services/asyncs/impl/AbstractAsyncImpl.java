@@ -41,6 +41,7 @@ public abstract class AbstractAsyncImpl {
                             }
                         });
                     } catch (InterruptedException | InvocationTargetException e) {
+                        e.printStackTrace();
                         throw new RuntimeException(e);
                     }
                 }

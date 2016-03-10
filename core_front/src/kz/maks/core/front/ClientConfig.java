@@ -22,7 +22,7 @@ public class ClientConfig implements IClientConfig {
     }
 
     @Override
-    public boolean cacheTrees() {
+    public boolean useCache() {
         return cacheTrees;
     }
 

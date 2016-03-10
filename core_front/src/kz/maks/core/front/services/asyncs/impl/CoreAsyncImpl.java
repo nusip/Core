@@ -22,4 +22,14 @@ public class CoreAsyncImpl extends AbstractAsyncImpl implements CoreAsync {
         }, callback);
     }
 
+    @Override
+    public void login(final String identifier, final String credentials, Callback<Boolean> callback) {
+        executeAsync(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return CORE_REMOTE().login(identifier, credentials);
+            }
+        }, callback);
+    }
+
 }

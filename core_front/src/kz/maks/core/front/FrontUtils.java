@@ -50,14 +50,22 @@ public class FrontUtils {
     }
 
     public static Component vGap() {
-        Component strut = Box.createVerticalStrut(DEFAULT_GAP_SIZE);
-        strut.setMaximumSize(new Dimension(DEFAULT_GAP_SIZE, DEFAULT_GAP_SIZE));
+        return vGap(DEFAULT_GAP_SIZE);
+    }
+
+    public static Component vGap(int gapSize) {
+        Component strut = Box.createVerticalStrut(gapSize);
+        strut.setMaximumSize(new Dimension(gapSize, gapSize));
         return strut;
     }
 
     public static Component hGap() {
-        Component strut = Box.createHorizontalStrut(DEFAULT_GAP_SIZE);
-        strut.setMaximumSize(new Dimension(DEFAULT_GAP_SIZE, DEFAULT_GAP_SIZE));
+        return hGap(DEFAULT_GAP_SIZE);
+    }
+
+    public static Component hGap(int gapSize) {
+        Component strut = Box.createHorizontalStrut(gapSize);
+        strut.setMaximumSize(new Dimension(gapSize, gapSize));
         return strut;
     }
 
@@ -79,6 +87,20 @@ public class FrontUtils {
         component.setPreferredSize(dimension);
     }
 
+    public static void setForcedWidth(Component component, int width) {
+        setPreferredWidth(component, width);
+        setMinWidth(component, width);
+        setMaxWidth(component, width);
+        setWidth(component, width);
+    }
+
+    public static void setForcedHeight(Component component, int height) {
+        setPreferredHeight(component, height);
+        setMinHeight(component, height);
+        setMaxHeight(component, height);
+        setHeight(component, height);
+    }
+
     public static void setPreferredHeight(Component component, int height) {
         Dimension dimension = component.getPreferredSize();
         dimension.setSize(dimension.getWidth(), height);
@@ -97,4 +119,15 @@ public class FrontUtils {
         component.setMinimumSize(dimension);
     }
 
+    public static void setHeight(Component component, int height) {
+        Dimension dimension = component.getSize();
+        dimension.setSize(dimension.getWidth(), height);
+        component.setSize(dimension);
+    }
+
+    public static void setWidth(Component component, int width) {
+        Dimension dimension = component.getSize();
+        dimension.setSize(width, dimension.getHeight());
+        component.setSize(dimension);
+    }
 }

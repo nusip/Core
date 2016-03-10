@@ -10,4 +10,6 @@ public interface CoreAsync {
 
     void getTrees(Callback<Map<String, List<ITreeNode>>> callback);
 
+    void login(String identifier, String credentials, Callback<Boolean> callback);
+
 }

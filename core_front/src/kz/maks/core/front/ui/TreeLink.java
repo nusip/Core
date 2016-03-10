@@ -1,6 +1,5 @@
 package kz.maks.core.front.ui;
 
-import kz.maks.core.front.FrontUtils;
 import kz.maks.core.front.annotations.TreeName;
 import kz.maks.core.front.validation.AbstractFieldValidator;
 import kz.maks.core.shared.Utils;
@@ -60,7 +59,7 @@ public class TreeLink extends AbstractFieldValidator<Long> {
     @Override
     public void set(Long val) {
         this.value = val;
-        linkButton.setText(val != null ? tree.getById(val).getTitle() : null);
+        linkButton.setText(val != null ? tree.getById(val).title() : null);
     }
 
     @Override

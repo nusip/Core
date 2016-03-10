@@ -15,7 +15,7 @@ import java.awt.event.ActionListener;
 import static kz.maks.core.shared.Utils.extractId;
 
 public class CRUD<PARAMS extends AbstractSearchParams, RECORD extends HasId, DETAILS> {
-    private static final int PAGE_SIZE = 20;
+    private static final int PAGE_SIZE = 100;
     private final JFrame rootFrame;
     private final Table<RECORD> table;
     private final BtnPgPanel btnPgPanel;

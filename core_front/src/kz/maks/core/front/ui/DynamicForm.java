@@ -4,10 +4,9 @@ import kz.maks.core.front.FrontUtils;
 import kz.maks.core.front.annotations.*;
 import kz.maks.core.front.annotations.TextArea;
 import kz.maks.core.front.validation.RequiredFieldValidation;
-import kz.maks.core.front.validation.Validatable;
+import kz.maks.core.front.validation.AbstractForm;
 import kz.maks.core.front.validation.ValidatableFieldAccessor;
 import kz.maks.core.shared.Utils;
-import kz.maks.core.shared.models.Accessor;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,28 +16,18 @@ import java.util.List;
 
 import static kz.maks.core.shared.Utils.isDecimalType;
 
-public class Form<T> implements Accessor<T>, Validatable {
-
-    public final JPanel ui = new JPanel();
-
+public class DynamicForm<T> extends AbstractForm<T> {
     private final Frame parent;
-    private final FormField<T>[] formFields;
-    private final Class<T> clazz;
-
-    private Map<FormField, ValidatableFieldAccessor> fieldValues = new HashMap<>();
-    private final List<String> errorMessages = new ArrayList<>();
-
     private int cols;
 
-    public Form(Frame parent, FormField<T>[] formFields) {
+    public DynamicForm(Frame parent, FormField<T>[] formFields) {
         this(parent, formFields, 1);
     }
 
-    public Form(Frame parent, FormField<T>[] formFields, int cols) {
+    public DynamicForm(Frame parent, FormField<T>[] formFields, int cols) {
+        super(formFields);
         this.parent = parent;
-        this.formFields = formFields;
         this.cols = cols;
-        clazz = formFields[0].formClass();
 
         try {
             build();
@@ -75,7 +64,7 @@ public class Form<T> implements Accessor<T>, Validatable {
             } else if (Boolean.class.isAssignableFrom(field.getType())) {
                 fieldComponent = getCheckBox(formField);
             } else if (Number.class.isAssignableFrom(field.getType())) {
-                fieldComponent = getSpinner(formField, isDecimalType(field.getType()));
+                fieldComponent = getSpinner(formField, isDecimalType(field.getType()) ? Spinner.DECIMAL_MODE : Spinner.INT_MODE);
             } else if (field.getType().isEnum()) {
                 fieldComponent = getCombo(formField, field.getType());
             } else if (List.class.isAssignableFrom(field.getType())) {
@@ -176,13 +165,13 @@ public class Form<T> implements Accessor<T>, Validatable {
     }
 
     private JComboBox getCombo(FormField formField, Class<?> type) {
-        ComboBox comboBox = new ComboBox(formField, type.getEnumConstants());
+        EnumBox comboBox = new EnumBox(formField, type.getEnumConstants());
         fieldValues.put(formField, comboBox);
         return comboBox.ui;
     }
 
-    private JSpinner getSpinner(FormField formField, boolean decimal) {
-        Spinner spinner = new Spinner(formField, decimal);
+    private JSpinner getSpinner(FormField formField, int mode) {
+        Spinner spinner = new Spinner(formField, mode);
         fieldValues.put(formField, spinner);
         return spinner.ui;
     }
@@ -214,54 +203,4 @@ public class Form<T> implements Accessor<T>, Validatable {
         return textField.ui;
     }
 
-    private T newInstance(Class<T> clazz) {
-        try {
-            return clazz.newInstance();
-
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public T get() {
-        T obj = newInstance(clazz);
-
-        for (FormField<T> formField : formFields) {
-            Accessor fieldValue = fieldValues.get(formField);
-            Object val = fieldValue.get();
-            Utils.invokeMethod(obj, clazz, Utils.setterName(formField.name()), val);
-        }
-
-        return obj;
-    }
-
-    @Override
-    public void set(T obj) {
-        for (FormField<T> formField : formFields) {
-            Object val = obj != null ? Utils.invokeMethod(obj, clazz, Utils.getterName(formField.name())) : null;
-            Accessor fieldValue = fieldValues.get(formField);
-            fieldValue.set(val);
-        }
-    }
-
-    @Override
-    public List<String> errorMessages() {
-        return errorMessages;
-    }
-
-    @Override
-    public boolean isValid() {
-        errorMessages.clear();
-
-        for (FormField<T> formField : formFields) {
-            ValidatableFieldAccessor fieldValue = fieldValues.get(formField);
-
-            if (!fieldValue.isValid()) {
-                errorMessages.addAll(fieldValue.errorMessages());
-            }
-        }
-
-        return errorMessages.isEmpty();
-    }
 }

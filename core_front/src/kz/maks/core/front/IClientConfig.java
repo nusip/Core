@@ -8,6 +8,6 @@ public interface IClientConfig {
 
     Class<?> remoteStoreClass();
 
-    boolean cacheTrees();
+    boolean useCache();
 
 }
