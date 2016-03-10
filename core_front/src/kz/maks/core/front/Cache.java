@@ -45,8 +45,8 @@ public class Cache {
         return (List<ITreeNode>) cache.get(treeName);
     }
 
-    public static List<Combo> getCombo(String comboName) {
-        return (List<Combo>) cache.get(comboName);
+    public static List<ICombo> getCombo(String comboName) {
+        return (List<ICombo>) cache.get(comboName);
     }
 
 }

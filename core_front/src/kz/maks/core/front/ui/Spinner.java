@@ -23,6 +23,7 @@ public class Spinner extends AbstractFieldValidator<Number> {
         this.mode = mode;
 
         if (mode == DECIMAL_MODE) {
+            ui.setModel(new SpinnerNumberModel(Double.valueOf(0), null, null, Double.valueOf(0)));
             JSpinner.NumberEditor editor = new JSpinner.NumberEditor(ui, "0.00");
             ui.setEditor(editor);
         }
@@ -30,20 +31,29 @@ public class Spinner extends AbstractFieldValidator<Number> {
 
     @Override
     public Number get() {
-        String sValue = String.valueOf(ui.getValue());
-
-        if (mode == DECIMAL_MODE) {
-            double val = Double.parseDouble(sValue);
-            return val;
-        } else {
-            int val = Integer.parseInt(sValue);
-            return val;
+        try {
+            if (mode == DECIMAL_MODE) {
+                double val = (double) ui.getValue();
+                return val;
+            } else {
+                int val = (int) ui.getValue();
+                return val;
+            }
+        } catch (Exception e) {
+            throw e;
         }
     }
 
     @Override
     public void set(Number val) {
-        ui.setValue(val == null ? 0 : val);
+        if (val == null) {
+            if (mode == DECIMAL_MODE) {
+                val = Double.valueOf(0);
+            } else {
+                val = Integer.valueOf(0);
+            }
+        }
+        ui.setValue(val);
     }
 
 }
