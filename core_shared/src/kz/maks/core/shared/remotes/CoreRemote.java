@@ -14,6 +14,4 @@ public interface CoreRemote extends Remote {
 
     Map<String, List<ICombo>> getCombos() throws RemoteException;
 
-    boolean login(String identifier, String password) throws RemoteException;
-
 }

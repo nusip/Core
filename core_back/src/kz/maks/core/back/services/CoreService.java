@@ -11,8 +11,6 @@ public interface CoreService {
 
     Map<String, List<ITreeNode>> getTrees();
 
-    boolean login(String identifier, String password);
-
     Map<String, List<ICombo>> getCombos();
 
 }

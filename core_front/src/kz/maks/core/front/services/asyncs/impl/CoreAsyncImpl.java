@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import static kz.maks.core.front.services.CoreRemotes.CORE_REMOTE;
+import static kz.maks.core.front.services.CoreRemotes.coreRemote;
 
 public class CoreAsyncImpl extends AbstractAsyncImpl implements CoreAsync {
 
@@ -17,17 +17,7 @@ public class CoreAsyncImpl extends AbstractAsyncImpl implements CoreAsync {
         executeAsync(new Callable<Map<String, List<ITreeNode>>>() {
             @Override
             public Map<String, List<ITreeNode>> call() throws Exception {
-                return CORE_REMOTE().getTrees();
-            }
-        }, callback);
-    }
-
-    @Override
-    public void login(final String identifier, final String credentials, Callback<Boolean> callback) {
-        executeAsync(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return CORE_REMOTE().login(identifier, credentials);
+                return coreRemote().getTrees();
             }
         }, callback);
     }

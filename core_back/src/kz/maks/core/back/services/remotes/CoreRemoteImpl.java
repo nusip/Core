@@ -8,8 +8,6 @@ import kz.maks.core.shared.models.ITreeNode;
 import kz.maks.core.shared.remotes.CoreRemote;
 
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,11 +28,6 @@ public class CoreRemoteImpl extends AbstractRemoteImpl implements CoreRemote {
     @Override
     public Map<String, List<ICombo>> getCombos() throws RemoteException {
         return coreService.getCombos();
-    }
-
-    @Override
-    public boolean login(String identifier, String password) throws RemoteException {
-        return coreService.login(identifier, password);
     }
 
 }
