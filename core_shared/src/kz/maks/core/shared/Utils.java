@@ -26,7 +26,8 @@ import java.util.concurrent.TimeUnit;
  * Created by Maksat on 05.01.2016.
  */
 public class Utils {
-
+    public static final String DATE_FORMAT_FULL = "yyyy-MM-dd HH:mm:ss";
+    public static final String DATE_FORMAT_DEFAULT = "yyyy-MM-dd";
     public static final int ONE_HOUR = 1000 * 60 * 60;
     public static final int ONE_DAY = ONE_HOUR * 24;
 
