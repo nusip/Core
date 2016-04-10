@@ -5,6 +5,7 @@ import kz.maks.core.shared.models.ICombo;
 import kz.maks.core.shared.models.ITreeNode;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,8 @@ public class Cache {
     }
 
     public static List<ICombo> getCombo(String comboName) {
-        return (List<ICombo>) cache.get(comboName);
+        List<ICombo> combos = (List<ICombo>) cache.get(comboName);
+        return combos != null ? combos : new ArrayList<ICombo>();
     }
 
 }

@@ -117,6 +117,10 @@ public class Utils {
         return hasId != null ? hasId.getId() : null;
     }
 
+    public static String extractTitle(HasTitle hasTitle) {
+        return hasTitle != null ? hasTitle.getTitle() : null;
+    }
+
     public static <T extends Exception> void execute(int attemptsCount, Class<T> exceptionClass, Callable callable) {
         while (attemptsCount-- > 0) {
             try {
