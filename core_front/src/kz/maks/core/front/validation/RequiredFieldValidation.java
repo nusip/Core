@@ -8,7 +8,7 @@ public class RequiredFieldValidation implements FieldValidation {
 
     @Override
     public String validate(FormField formField, Object value) {
-        String error = "Поле \"" + formField.title() + "\" обязательно для заполнения.";
+        String error = "Поле \"" + formField.getTitle() + "\" обязательно для заполнения.";
 
         if (value == null)
             return error;
@@ -24,8 +24,14 @@ public class RequiredFieldValidation implements FieldValidation {
         }
 
         if (value instanceof List) {
-            if (((List) value).isEmpty())
-                return error;
+            List list = (List) value;
+
+            for (Object element : list) {
+                if (element == null || element.toString().trim().isEmpty())
+                    return error;
+            }
+
+            if (list.isEmpty()) return error;
         }
 
         return null;

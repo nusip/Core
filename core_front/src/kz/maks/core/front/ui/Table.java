@@ -2,83 +2,96 @@ package kz.maks.core.front.ui;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
+import kz.maks.core.front.annotations.ComboName;
+import kz.maks.core.front.annotations.Hidden;
 import kz.maks.core.shared.Utils;
 import kz.maks.core.shared.models.Accessor;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
+
+import static kz.maks.core.shared.Utils.getField;
 
 public class Table<T> implements Accessor<List<T>> {
-
     public final JTable ui;
 
-    private final DefaultTableModel model;
-    private final IColumn<T>[] columns;
-    private final boolean isCellEditable;
+    private final DefaultTableModel tableModel;
+    private final DefaultTableColumnModel tableColumnModel;
+    private final List<IColumn<T>> columns;
     private final boolean withNumberColumn;
     private final Class<T> clazz;
-    private final List<T> rows = new ArrayList<>();
     private int nextLastRowNumber = 1;
 
-    private static final String ROW_NUMBER_COL_NAME = "rowNumber";
-
     public Table(IColumn<T>[] columns) {
-        this(columns, false, true);
+        this(columns, true);
     }
 
-    public Table(IColumn<T>[] columns, final boolean isCellEditable, boolean withNumberColumn) {
-        this.columns = columns;
-        this.isCellEditable = isCellEditable;
+    public Table(final IColumn<T>[] cols, final boolean withNumberColumn) {
+        this.columns = Lists.newArrayList(cols);
         this.withNumberColumn = withNumberColumn;
-        clazz = columns[0].tableClass();
+        clazz = cols[0].tableClass();
 
-        model = new DefaultTableModel() {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return isCellEditable;
-            }
-        };
+        tableColumnModel = new DefaultTableColumnModel();
 
         ui = new JTable();
         ui.setFillsViewportHeight(true);
         ui.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        model.setColumnIdentifiers(withNumberColumn ? getColsWithRowNumbering(columns) : columns);
+        int modelIndex = 0;
 
-        ui.setModel(model);
+        if (withNumberColumn) {
+            Column rowNumberColumn = new Column(null, "rowNumber", "№", false, IColumn.DEFAULT_WIDTH);
+            columns.add(0, rowNumberColumn);
+        }
+
+        tableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return columns.get(column).isEditable();
+            }
+        };
+
+        tableModel.setColumnIdentifiers(columns.toArray());
+
+        for (; modelIndex < columns.size(); modelIndex++) {
+            IColumn column = columns.get(modelIndex);
+            addTableColumn(column, modelIndex);
+        }
+
+        ui.setModel(tableModel);
+        ui.setColumnModel(tableColumnModel);
     }
 
-    private Object[] getColsWithRowNumbering(IColumn<T>[] columns) {
-        ArrayList<IColumn<T>> cols = Lists.newArrayList(columns);
-        cols.add(0, new IColumn<T>() {
+    private TableColumn addTableColumn(IColumn column, int modelIndex) {
+        TableColumn tableColumn = new TableColumn();
+        tableColumn.setModelIndex(modelIndex);
+        tableColumn.setIdentifier(column.name());
+        tableColumn.setCellRenderer(new DefaultTableCellRenderer() {
             @Override
-            public Class<T> tableClass() {
-                return null;
-            }
-
-            @Override
-            public String name() {
-                return ROW_NUMBER_COL_NAME;
-            }
-
-            @Override
-            public String title() {
-                return "№";
-            }
-
-            @Override
-            public String toString() {
-                return title();
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                String sValue = getDisplayValue(value);
+                return super.getTableCellRendererComponent(table, sValue, isSelected, hasFocus, row, column);
             }
         });
-        return cols.toArray();
+//            tableColumn.setCellEditor();
+        tableColumn.setHeaderValue(column.getTitle());
+
+        if (column.width() > 0) {
+            tableColumn.setWidth(column.width());
+        }
+
+        tableColumnModel.addColumn(tableColumn);
+        return tableColumn;
     }
 
     public T getSelected() {
@@ -91,13 +104,11 @@ public class Table<T> implements Accessor<List<T>> {
     }
 
     private T getRow(int rowIndex) {
-        if (!isCellEditable) return rows.get(rowIndex);
-
         T obj = Utils.newInstance(clazz);
 
-        for (int colIndex = withNumberColumn ? 1 : 0; colIndex < columns.length; colIndex++) {
+        for (int colIndex = withNumberColumn ? 1 : 0; colIndex < columns.size(); colIndex++) {
             Object value = ui.getValueAt(rowIndex, colIndex);
-            Utils.invokeMethod(obj, clazz, Utils.setterName(columns[colIndex].name()), value);
+            Utils.invokeMethod(obj, clazz, Utils.setterName(columns.get(colIndex).name()), value);
         }
 
         return obj;
@@ -105,9 +116,8 @@ public class Table<T> implements Accessor<List<T>> {
 
     public void removeSelected() {
         int selectedRowIndex = ui.getSelectedRow();
-        rows.remove(selectedRowIndex);
         ui.getSelectionModel().clearSelection();
-        model.removeRow(selectedRowIndex);
+        tableModel.removeRow(selectedRowIndex);
     }
 
     @Override
@@ -127,11 +137,10 @@ public class Table<T> implements Accessor<List<T>> {
 
     @Override
     public void set(List<T> list) {
-        rows.clear();
         list = list == null ? new ArrayList<T>() : list;
         ui.getSelectionModel().clearSelection();
 
-        model.setRowCount(0);
+        tableModel.setRowCount(0);
 
         nextLastRowNumber = 1;
 
@@ -145,9 +154,7 @@ public class Table<T> implements Accessor<List<T>> {
     }
 
     private void addRow(T t) {
-        rows.add(t);
-
-        List<String> cells = new ArrayList<>();
+        List<Object> cells = new ArrayList<>();
 
         if (withNumberColumn) {
             cells.add(nextLastRowNumber + "");
@@ -155,16 +162,15 @@ public class Table<T> implements Accessor<List<T>> {
 
         nextLastRowNumber++;
 
-        for (IColumn<T> column : columns) {
-            Object value = Utils.invokeMethod(t, clazz, Utils.getterName(column.name()));
-            String strValue = getStringValue(value);
-            cells.add(strValue);
+        for (int i = withNumberColumn ? 1 : 0; i < columns.size(); i++) {
+            Object value = Utils.invokeMethod(t, clazz, Utils.getterName(columns.get(i).name()));
+            cells.add(value);
         }
 
-        model.addRow(cells.toArray());
+        tableModel.addRow(cells.toArray());
     }
 
-    private String getStringValue(Object value) {
+    private String getDisplayValue(Object value) {
         if (value == null) {
             return null;
 
@@ -182,7 +188,7 @@ public class Table<T> implements Accessor<List<T>> {
             List objList = (List) value;
 
             for (Object obj : objList) {
-                strList.add(getStringValue(obj));
+                strList.add(getDisplayValue(obj));
             }
 
             return Joiner.on("\n").join(strList);

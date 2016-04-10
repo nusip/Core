@@ -9,7 +9,7 @@ import java.rmi.*;
 
 public abstract class BaseClient {
 
-    private final IClientConfig config;
+    protected final IClientConfig config;
 
     public BaseClient(IClientConfig clientConfig) {
         this.config = clientConfig;

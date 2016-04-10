@@ -2,14 +2,11 @@ package kz.maks.core.shared;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import kz.maks.core.shared.models.Getter;
 import kz.maks.core.shared.models.HasId;
 import kz.maks.core.shared.models.HasTitle;
 import kz.maks.core.shared.models.ITreeNode;
 import org.reflections.ReflectionUtils;
 
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,7 +32,7 @@ public class Utils {
         String[] titles = new String[columns.length];
 
         for (int i = 0; i < columns.length; i++) {
-            titles[i] = columns[i].title();
+            titles[i] = columns[i].getTitle();
         }
 
         return titles;
@@ -47,10 +44,10 @@ public class Utils {
 
     public static HasTitle findByTitle(HasTitle[] hasTitles, String title) {
         for (HasTitle hasTitle : hasTitles) {
-            if (hasTitle.title().equals(title))
+            if (hasTitle.getTitle().equals(title))
                 return hasTitle;
         }
-        throw new IllegalArgumentException("title = " + title);
+        throw new IllegalArgumentException("getTitle = " + title);
     }
 
     public static String getterName(String fieldName) {

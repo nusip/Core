@@ -20,7 +20,7 @@ public class TreeLink extends AbstractFieldValidator<Long> {
 
     public TreeLink(Frame parent, FormField formField) {
         super(formField);
-        String title = "Выберите " + formField.title().toLowerCase();
+        String title = "Выберите " + formField.getTitle().toLowerCase();
         linkButton = new LinkButton(title);
         linkButton.ui.setHorizontalAlignment(SwingConstants.LEFT);
         ui = linkButton.ui;
@@ -59,7 +59,7 @@ public class TreeLink extends AbstractFieldValidator<Long> {
     @Override
     public void set(Long val) {
         this.value = val;
-        linkButton.setText(val != null ? tree.getById(val).title() : null);
+        linkButton.setText(val != null ? tree.getById(val).getTitle() : null);
     }
 
     @Override

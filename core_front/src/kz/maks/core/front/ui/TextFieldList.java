@@ -21,7 +21,7 @@ public class TextFieldList extends AbstractFieldValidator<List<String>> {
 
     public TextFieldList(FormField formField) {
         super(formField);
-        LinkButton linkButton = new LinkButton("Добавить " + formField.title().toLowerCase());
+        LinkButton linkButton = new LinkButton("Добавить " + formField.getTitle().toLowerCase());
         linkButton.ui.setHorizontalAlignment(SwingConstants.LEFT);
         linkBox.add(linkButton.ui);
         ui.add(linkBox);

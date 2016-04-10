@@ -39,13 +39,12 @@ public class DynamicForm<T> extends AbstractForm<T> {
         for (FormField formField : formFields) {
             JComponent fieldComponent = addField(formField);
 
-            JLabel label = getLabel(formField);
-            label.setHorizontalAlignment(SwingConstants.RIGHT);
-            JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-            labelPanel.add(label);
-            addComponentInner(labelPanel, fieldIndex++);
-
             if (fieldComponent != null) {
+                JLabel label = getLabel(formField);
+                label.setHorizontalAlignment(SwingConstants.RIGHT);
+                JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                labelPanel.add(label);
+                addComponentInner(labelPanel, fieldIndex++);
                 addComponentInner(fieldComponent, fieldIndex++);
             }
         }

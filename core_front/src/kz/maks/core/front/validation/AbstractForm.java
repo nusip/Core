@@ -66,7 +66,7 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
             Class<?> componentType = (Class<?>) fieldType.getActualTypeArguments()[0];
 
             if (componentType == String.class) {
-                fieldComponent = getTextFieldList(formField);
+                fieldComponent = getStringTableField(formField);
             } else {
                 return fieldComponent;
             }
@@ -160,9 +160,9 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
         boolean isRequired = Utils.getField(formField.getClass(), formField.name()).isAnnotationPresent(Required.class);
 
         if (isRequired) {
-            label.setText("<HTML>" + formField.title() + "<b color=\"red\">*</b></HTML>");
+            label.setText("<HTML>" + formField.getTitle() + "<b color=\"red\">*</b></HTML>");
         } else {
-            label.setText(formField.title());
+            label.setText(formField.getTitle());
         }
 
         return label;
@@ -212,6 +212,15 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
         FrontUtils.setMinHeight(scrollPane, 100);
         fieldValues.put(formField, textAreaField);
         return scrollPane;
+    }
+
+    protected Box getStringTableField(FormField formField) {
+        boolean isRequired = Utils.getField(formField.getClass(), formField.name()).isAnnotationPresent(Required.class);
+        String title = isRequired ? "<HTML>" + formField.getTitle() + "<b color=\"red\">*</b></HTML>" : formField.getTitle();
+        final SimpleTableField simpleTableField = new SimpleTableField(
+                formField, new Column<>(SimpleRecord.class, SimpleRecord.FIELD_NAME, title, true, IColumn.DEFAULT_WIDTH));
+        fieldValues.put(formField, simpleTableField);
+        return simpleTableField.tableField.ui;
     }
 
     protected Box getTextFieldList(FormField formField) {

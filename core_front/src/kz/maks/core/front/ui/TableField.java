@@ -10,20 +10,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import static kz.maks.core.front.ui.BtnCRUDPanel.Button.ADD;
+import static kz.maks.core.front.ui.BtnCRUDPanel.Button.DELETE;
+import static kz.maks.core.front.ui.BtnCRUDPanel.Button.EDIT;
+
 public class TableField<T> extends AbstractFieldValidator<List<T>> {
     public final Box ui = Box.createHorizontalBox();
     public final Table<T> table;
-    private final BtnCRUDPanel btnCRUDPanel = new BtnCRUDPanel();
+    private final BtnCRUDPanel btnCRUDPanel = new BtnCRUDPanel(ADD, DELETE);
 
     public TableField(FormField formField, IColumn<T>[] columns) {
         super(formField);
-        this.table = new Table<>(columns, true, false);
+        this.table = new Table<>(columns, false);
         JScrollPane scrollPane = new JScrollPane(table.ui);
         FrontUtils.setPreferredHeight(scrollPane, 100);
         FrontUtils.setPreferredWidth(scrollPane, 100);
         ui.add(scrollPane);
         {
-            btnCRUDPanel.btnEdit.setVisible(false);
             btnCRUDPanel.btnDelete.setEnabled(false);
             ui.add(btnCRUDPanel.ui);
 

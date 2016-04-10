@@ -3,8 +3,8 @@ package kz.maks.core.shared.models;
 import java.io.Serializable;
 
 public class Combo implements ICombo, Serializable {
-    private final Long id;
-    private final String title;
+    private Long id;
+    private String title;
 
     public Combo(Long id, String title) {
         this.id = id;
@@ -17,7 +17,7 @@ public class Combo implements ICombo, Serializable {
     }
 
     @Override
-    public String title() {
+    public String getTitle() {
         return title;
     }
 
