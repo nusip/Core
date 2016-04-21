@@ -24,8 +24,8 @@ import static kz.maks.core.shared.Utils.getField;
 
 public class Table<T> implements Accessor<List<T>> {
     public final JTable ui;
+    public final DefaultTableModel tableModel;
 
-    private final DefaultTableModel tableModel;
     private final DefaultTableColumnModel tableColumnModel;
     private final List<IColumn<T>> columns;
     private final boolean withNumberColumn;

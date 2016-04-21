@@ -3,28 +3,36 @@ package kz.maks.core.front.ui;
 import kz.maks.core.front.services.Callback;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ProgressDialogCallback<RESULT> extends Callback<RESULT> {
-    private final JFrame parent;
+    private final ProgressGlassPane progressGlassPane;
+    private final Component parent;
 
     /**
      * expects parent to have ProgressGlassPane instance set as glass pane
      */
     public ProgressDialogCallback(JFrame parent) {
         this.parent = parent;
+        progressGlassPane = new ProgressGlassPane();
+        parent.setGlassPane(progressGlassPane);
+    }
+
+    public ProgressDialogCallback(JDialog parent) {
+        this.parent = parent;
+        progressGlassPane = new ProgressGlassPane();
+        parent.setGlassPane(progressGlassPane);
     }
 
     @Override
     public void beforeCall() {
         parent.setEnabled(false);
-        ProgressGlassPane glassPane = (ProgressGlassPane) parent.getGlassPane();
-        glassPane.showPane();
+        progressGlassPane.showPane();
     }
 
     @Override
     public void atTheEnd() {
-        ProgressGlassPane glassPane = (ProgressGlassPane) parent.getGlassPane();
-        glassPane.hidePane();
+        progressGlassPane.hidePane();
         parent.setEnabled(true);
     }
 }

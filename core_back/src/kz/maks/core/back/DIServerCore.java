@@ -54,8 +54,7 @@ public final class DIServerCore {
 
     void init() {
         try {
-            // TODO uncomment
-//            migrateDB();
+            migrateDB();
 
             LocateRegistry.createRegistry(config.rmiLocalPort());
 
