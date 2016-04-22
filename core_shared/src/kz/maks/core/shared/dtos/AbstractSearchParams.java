@@ -36,7 +36,7 @@ public abstract class AbstractSearchParams implements Serializable {
         this.sortField = sortField;
     }
 
-    public boolean isSortAsc() {
+    public boolean getSortAsc() {
         return sortAsc;
     }
 

@@ -121,6 +121,10 @@ public class Utils {
         return hasTitle != null ? hasTitle.getTitle() : null;
     }
 
+    public static String extractEnumName(Enum enumeration) {
+        return enumeration != null ? enumeration.name() : null;
+    }
+
     public static <T extends Exception> void execute(int attemptsCount, Class<T> exceptionClass, Callable callable) {
         while (attemptsCount-- > 0) {
             try {

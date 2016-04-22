@@ -53,7 +53,7 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
             } else {
                 fieldComponent = getTextField(formField);
             }
-        } else if (Boolean.class.isAssignableFrom(field.getType())) {
+        } else if (Boolean.class.isAssignableFrom(field.getType()) || boolean.class.isAssignableFrom(field.getType())) {
             fieldComponent = getCheckBox(formField);
         } else if (Number.class.isAssignableFrom(field.getType())) {
             fieldComponent = getSpinner(formField, isDecimalType(field.getType()) ? Spinner.DECIMAL_MODE : Spinner.INT_MODE);
