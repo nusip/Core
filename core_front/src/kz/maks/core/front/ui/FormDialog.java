@@ -13,7 +13,7 @@ public class FormDialog<T> extends BasicDialog {
     public final AbstractForm<T> form;
 
     public FormDialog(Frame parent, AbstractForm<T> form) {
-        super(parent, form.ui, null);
+        super(parent, form.ui(), null);
         this.form = form;
     }
 

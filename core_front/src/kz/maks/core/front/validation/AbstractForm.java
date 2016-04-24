@@ -18,8 +18,7 @@ import java.util.List;
 import static kz.maks.core.shared.Utils.isDecimalType;
 
 public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
-    public final JPanel ui = new JPanel();
-
+    protected final JPanel ui = new JPanel();
     protected final FormField<T>[] formFields;
     protected final Class<T> clazz;
     protected final Map<FormField, ValidatableFieldAccessor> fieldValues = new HashMap<>();
@@ -27,6 +26,10 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
     protected final List<String> errorMessages = new ArrayList<>();
     protected final Frame parent;
     protected final Map<String, Field> fieldMap;
+
+    public JComponent ui() {
+        return ui;
+    }
 
     protected AbstractForm(Frame parent, FormField<T>[] formFields) {
         this.formFields = formFields;

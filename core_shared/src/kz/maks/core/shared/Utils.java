@@ -27,6 +27,8 @@ public class Utils {
     public static final String DATE_FORMAT_DEFAULT = "yyyy-MM-dd";
     public static final int ONE_HOUR = 1000 * 60 * 60;
     public static final int ONE_DAY = ONE_HOUR * 24;
+    public static final int ONE_WEEK = ONE_DAY * 7;
+    public static final int ONE_MONTH = ONE_DAY * 30;
 
     public static <T extends HasTitle> String[] extractTitles(T[] columns) {
         String[] titles = new String[columns.length];
