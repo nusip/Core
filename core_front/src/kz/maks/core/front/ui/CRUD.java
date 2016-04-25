@@ -95,7 +95,7 @@ public class CRUD<PARAMS extends AbstractSearchParams, RECORD extends HasId, DET
         formDialog.runOnValid(new Runnable() {
             @Override
             public void run() {
-                crudAsync.save(formDialog.form.get(), new ProgressDialogCallback<Void>(rootFrame) {
+                crudAsync.save(formDialog.form.get(), new ProgressDialogCallback<Void>(formDialog.ui) {
                     @Override
                     public void onSuccess(Void aVoid) {
                         formDialog.ui.setVisible(false);

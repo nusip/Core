@@ -33,17 +33,17 @@ public abstract class AbstractAsyncImpl {
 
                 if (!wasError) {
                     final RESULT finalResult = result;
-                    try {
-                        SwingUtilities.invokeAndWait(new Runnable() {
+//                    try {
+                        SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
                                 callback.onSuccess(finalResult);
                             }
                         });
-                    } catch (InterruptedException | InvocationTargetException e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
+//                    } catch (InterruptedException | InvocationTargetException e) {
+//                        e.printStackTrace();
+//                        throw new RuntimeException(e);
+//                    }
                 }
 
                 callback.atTheEnd();
