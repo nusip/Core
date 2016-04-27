@@ -6,10 +6,11 @@ import javax.swing.*;
 
 public class CheckBox extends AbstractFieldValidator<Boolean> {
 
-    public final JCheckBox ui = new JCheckBox();
+    public final JCheckBox ui;
 
     public CheckBox(FormField formField) {
         super(formField);
+        ui = new JCheckBox(formField.getTitle());
     }
 
     @Override

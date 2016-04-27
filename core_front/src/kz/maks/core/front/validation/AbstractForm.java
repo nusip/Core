@@ -1,5 +1,6 @@
 package kz.maks.core.front.validation;
 
+import com.google.common.collect.Sets;
 import kz.maks.core.front.Cache;
 import kz.maks.core.front.FrontUtils;
 import kz.maks.core.front.annotations.*;
@@ -10,11 +11,18 @@ import kz.maks.core.shared.models.ICombo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.List;
 
+import static com.google.common.collect.Sets.newHashSet;
+import static java.awt.AWTKeyStroke.getAWTKeyStroke;
+import static java.awt.KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS;
+import static java.awt.KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS;
+import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
+import static java.awt.event.KeyEvent.VK_TAB;
 import static kz.maks.core.shared.Utils.isDecimalType;
 
 public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
@@ -78,6 +86,11 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
         fieldComponents.put(formField, fieldComponent);
 
         return fieldComponent;
+    }
+
+    private void setStandardFocusTraversalKeys(JComponent component) {
+        component.setFocusTraversalKeys(FORWARD_TRAVERSAL_KEYS, newHashSet(getAWTKeyStroke(VK_TAB, 0)));
+        component.setFocusTraversalKeys(BACKWARD_TRAVERSAL_KEYS, newHashSet(getAWTKeyStroke(VK_TAB, SHIFT_DOWN_MASK)));
     }
 
     protected void processAnnotations() {
@@ -168,6 +181,8 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
             label.setText(formField.getTitle());
         }
 
+        label.setText(fieldValues.get(formField) instanceof CheckBox ? "" : label.getText());
+
         return label;
     }
 
@@ -210,6 +225,7 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
 
     protected JScrollPane getTextArea(FormField formField) {
         TextAreaField textAreaField = new TextAreaField(formField);
+        setStandardFocusTraversalKeys(textAreaField.ui);
         JScrollPane scrollPane = new JScrollPane(textAreaField.ui);
         FrontUtils.setPreferredHeight(scrollPane, 100);
         FrontUtils.setMinHeight(scrollPane, 100);
@@ -222,6 +238,18 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
         String title = isRequired ? "<HTML>" + formField.getTitle() + "<b color=\"red\">*</b></HTML>" : formField.getTitle();
         final SimpleTableField simpleTableField = new SimpleTableField(
                 formField, new Column<>(SimpleRecord.class, SimpleRecord.FIELD_NAME, title, true, IColumn.DEFAULT_WIDTH));
+        setStandardFocusTraversalKeys(simpleTableField.tableField.table.ui);
+        simpleTableField.tableField.table.ui.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                simpleTableField.tableField.table.ui.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                simpleTableField.tableField.table.ui.setBorder(null);
+            }
+        });
         fieldValues.put(formField, simpleTableField);
         return simpleTableField.tableField.ui;
     }
