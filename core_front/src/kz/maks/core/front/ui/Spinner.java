@@ -23,7 +23,7 @@ public class Spinner extends AbstractFieldValidator<Number> {
         this.mode = mode;
 
         if (mode == DECIMAL_MODE) {
-            ui.setModel(new SpinnerNumberModel(Double.valueOf(0), null, null, Double.valueOf(0)));
+            ui.setModel(new SpinnerNumberModel(Double.valueOf(0), null, null, Double.valueOf(1)));
             JSpinner.NumberEditor editor = new JSpinner.NumberEditor(ui, "0.00");
             ui.setEditor(editor);
         }
