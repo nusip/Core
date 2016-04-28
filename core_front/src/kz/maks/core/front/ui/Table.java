@@ -80,7 +80,9 @@ public class Table<T> implements Accessor<List<T>> {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 String sValue = getDisplayValue(value);
-                return super.getTableCellRendererComponent(table, sValue, isSelected, hasFocus, row, column);
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, sValue, isSelected, hasFocus, row, column);
+                label.setToolTipText("<HTML><p width='250px'>" + sValue + "<p><HTML/>");
+                return label;
             }
         });
 //            tableColumn.setCellEditor();
