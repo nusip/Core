@@ -195,7 +195,7 @@ public class Table<T> implements Accessor<List<T>> {
                 strList.add(getDisplayValue(obj));
             }
 
-            return Joiner.on("\n").join(strList);
+            return Joiner.on(", ").join(strList);
         }
 
         return value.toString();
