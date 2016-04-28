@@ -50,7 +50,7 @@ public class Table<T> implements Accessor<List<T>> {
         int modelIndex = 0;
 
         if (withNumberColumn) {
-            Column rowNumberColumn = new Column(null, "rowNumber", "№", false, 30);
+            Column rowNumberColumn = new Column(null, "rowNumber", "№", false, 40);
             columns.add(0, rowNumberColumn);
         }
 
@@ -65,7 +65,11 @@ public class Table<T> implements Accessor<List<T>> {
 
         for (; modelIndex < columns.size(); modelIndex++) {
             IColumn column = columns.get(modelIndex);
-            addTableColumn(column, modelIndex);
+
+            if (!(column.getClass().isEnum() &&
+                    getField(column.getClass(), column.name()).isAnnotationPresent(Hidden.class))) {
+                addTableColumn(column, modelIndex);
+            }
         }
 
         ui.setModel(tableModel);
@@ -109,7 +113,7 @@ public class Table<T> implements Accessor<List<T>> {
         T obj = Utils.newInstance(clazz);
 
         for (int colIndex = withNumberColumn ? 1 : 0; colIndex < columns.size(); colIndex++) {
-            Object value = ui.getValueAt(rowIndex, colIndex);
+            Object value = tableModel.getValueAt(rowIndex, colIndex);
             Utils.invokeMethod(obj, clazz, Utils.setterName(columns.get(colIndex).name()), value);
         }
 
