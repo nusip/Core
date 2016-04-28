@@ -5,7 +5,7 @@ import kz.maks.core.shared.models.HasTitle;
 
 public interface IColumn<T> extends HasName, HasTitle {
 
-    public static final int DEFAULT_WIDTH = -1;
+    int DEFAULT_WIDTH = -1;
 
     Class<T> tableClass();
 

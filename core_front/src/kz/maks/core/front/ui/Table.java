@@ -50,7 +50,7 @@ public class Table<T> implements Accessor<List<T>> {
         int modelIndex = 0;
 
         if (withNumberColumn) {
-            Column rowNumberColumn = new Column(null, "rowNumber", "№", false, IColumn.DEFAULT_WIDTH);
+            Column rowNumberColumn = new Column(null, "rowNumber", "№", false, 30);
             columns.add(0, rowNumberColumn);
         }
 
@@ -86,8 +86,8 @@ public class Table<T> implements Accessor<List<T>> {
 //            tableColumn.setCellEditor();
         tableColumn.setHeaderValue(column.getTitle());
 
-        if (column.width() > 0) {
-            tableColumn.setWidth(column.width());
+        if (column.width() > -1) {
+            tableColumn.setPreferredWidth(column.width());
         }
 
         tableColumnModel.addColumn(tableColumn);
@@ -147,6 +147,10 @@ public class Table<T> implements Accessor<List<T>> {
         for (T t : list) {
             addRow(t);
         }
+    }
+
+    public void clean() {
+        set(new ArrayList<T>());
     }
 
     public void addEmptyRow() {
