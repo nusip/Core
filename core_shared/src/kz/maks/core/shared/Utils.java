@@ -3,6 +3,7 @@ package kz.maks.core.shared;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import kz.maks.core.shared.models.HasId;
+import kz.maks.core.shared.models.HasName;
 import kz.maks.core.shared.models.HasTitle;
 import kz.maks.core.shared.models.ITreeNode;
 import org.reflections.ReflectionUtils;
@@ -29,16 +30,6 @@ public class Utils {
     public static final int ONE_DAY = ONE_HOUR * 24;
     public static final int ONE_WEEK = ONE_DAY * 7;
     public static final int ONE_MONTH = ONE_DAY * 30;
-
-    public static <T extends HasTitle> String[] extractTitles(T[] columns) {
-        String[] titles = new String[columns.length];
-
-        for (int i = 0; i < columns.length; i++) {
-            titles[i] = columns[i].getTitle();
-        }
-
-        return titles;
-    }
 
     public static boolean isDecimalType(Class<?> clazz) {
         return Double.class.isAssignableFrom(clazz) || BigDecimal.class.isAssignableFrom(clazz);
@@ -123,8 +114,32 @@ public class Utils {
         return hasTitle != null ? hasTitle.getTitle() : null;
     }
 
+    public static <T extends HasTitle> String[] extractTitles(T[] hasTitles) {
+        String[] titles = new String[hasTitles.length];
+
+        for (int i = 0; i < hasTitles.length; i++) {
+            titles[i] = hasTitles[i].getTitle();
+        }
+
+        return titles;
+    }
+
     public static String extractEnumName(Enum enumeration) {
         return enumeration != null ? enumeration.name() : null;
+    }
+
+    public static String extractName(HasName hasName) {
+        return hasName != null ? hasName.name() : null;
+    }
+
+    public static <T extends HasName> List<String> extractNames(List<T> hasNames) {
+        List<String> names = new ArrayList<>();
+
+        for (T hasName : hasNames) {
+            names.add(hasName.name());
+        }
+
+        return names;
     }
 
     public static <T extends Exception> void execute(int attemptsCount, Class<T> exceptionClass, Callable callable) {

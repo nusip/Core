@@ -2,6 +2,7 @@ package kz.maks.core.back.services.impl;
 
 import kz.maks.core.back.Registry;
 import kz.maks.core.back.annotations.Service;
+import kz.maks.core.back.entities.AbstractUserEntity;
 import kz.maks.core.back.services.CoreService;
 import kz.maks.core.shared.Utils;
 import kz.maks.core.shared.models.Combo;
@@ -9,12 +10,14 @@ import kz.maks.core.shared.models.ICombo;
 import kz.maks.core.shared.models.ITreeNode;
 import kz.maks.core.shared.models.TreeNode;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static kz.maks.core.back.entities.AbstractUserEntity.IS_ACTIVE_FIELD;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNull;
 
@@ -77,7 +80,13 @@ public class CoreServiceImpl extends AbstractServiceImpl implements CoreService 
     }
 
     private List<ICombo> getCombo(Class<? extends ICombo> comboEntityClass) {
-        List<ICombo> combos = session().createCriteria(comboEntityClass).list();
+        Criteria criteria = session().createCriteria(comboEntityClass);
+
+        if (AbstractUserEntity.class.isAssignableFrom(comboEntityClass)) {
+            criteria.add(eq(IS_ACTIVE_FIELD, true));
+        }
+
+        List<ICombo> combos = criteria.list();
         List<ICombo> copies = new ArrayList<>();
 
         for (ICombo combo : combos) {

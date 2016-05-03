@@ -20,7 +20,7 @@ public class PasswordUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(getPasswordHash("maks"));
+        System.out.println(getPasswordHash("root123456"));
     }
 
 }
