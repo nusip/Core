@@ -114,11 +114,11 @@ public class Utils {
         return hasTitle != null ? hasTitle.getTitle() : null;
     }
 
-    public static <T extends HasTitle> String[] extractTitles(T[] hasTitles) {
-        String[] titles = new String[hasTitles.length];
+    public static <T extends HasTitle> List<String> extractTitles(List<T> hasTitles) {
+        List<String> titles = new ArrayList<>();
 
-        for (int i = 0; i < hasTitles.length; i++) {
-            titles[i] = hasTitles[i].getTitle();
+        for (T hasTitle : hasTitles) {
+            titles.add(hasTitle.getTitle());
         }
 
         return titles;
@@ -140,6 +140,16 @@ public class Utils {
         }
 
         return names;
+    }
+
+    public static <T extends HasId> List<Long> extractIds(List<T> hasIds) {
+        List<Long> ids = new ArrayList<>();
+
+        for (T hasId : hasIds) {
+            ids.add(hasId.getId());
+        }
+
+        return ids;
     }
 
     public static <T extends Exception> void execute(int attemptsCount, Class<T> exceptionClass, Callable callable) {

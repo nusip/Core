@@ -11,7 +11,7 @@ public class ComboBox extends AbstractFieldValidator<Long> {
 
     public final JComboBox ui;
 
-    private final Map<Long, ICombo> idToCombo = new HashMap<>();
+    final Map<Long, ICombo> idToCombo = new HashMap<>();
 
     public ComboBox(FormField formField, ICombo[] items) {
         super(formField);

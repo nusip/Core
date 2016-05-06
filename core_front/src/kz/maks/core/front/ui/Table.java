@@ -92,7 +92,7 @@ public class Table<T> implements Accessor<List<T>> {
                 return label;
             }
         });
-//            tableColumn.setCellEditor();
+//        tableColumn.setCellEditor(new DefaultCellEditor(new JComboBox(new String[] {"ASD", "QWE"})));
         tableColumn.setHeaderValue(column.getTitle());
 
         if (column.width() > -1) {

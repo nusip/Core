@@ -13,6 +13,11 @@ public class RequiredFieldValidation implements FieldValidation {
         if (value == null)
             return error;
 
+        if (value instanceof String) {
+            if (((String)value).isEmpty())
+                return error;
+        }
+
         if (value instanceof Integer) {
             if (value == 0)
                 return error;

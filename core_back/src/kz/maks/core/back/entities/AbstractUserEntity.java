@@ -8,6 +8,8 @@ import java.util.List;
 
 @MappedSuperclass
 public abstract class AbstractUserEntity extends AbstractBaseEntity implements HasIsActive {
+    public static final String ROOT_USER_IDENTIFIER = "root";
+
     public static final String IDENTIFIER_FIELD = "identifier";
     public static final String CREDENTIALS_FIELD = "credentials";
     public static final String IS_ACTIVE_FIELD = "isActive";

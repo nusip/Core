@@ -22,6 +22,7 @@ import static java.awt.KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS;
 import static java.awt.KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS;
 import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
 import static java.awt.event.KeyEvent.VK_TAB;
+import static kz.maks.core.front.Cache.getCombo;
 import static kz.maks.core.front.ui.Spinner.DECIMAL_MODE;
 import static kz.maks.core.front.ui.Spinner.INT_MODE;
 import static kz.maks.core.shared.Utils.getField;
@@ -61,6 +62,8 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
 
             if (getField(formField.getClass(), formField.name()).isAnnotationPresent(kz.maks.core.front.annotations.TextArea.class)) {
                 fieldComponent = getTextArea(formField);
+            } else if (getField(formField.getClass(), formField.name()).isAnnotationPresent(Password.class)) {
+                fieldComponent = getPasswordField(formField);
             } else {
                 fieldComponent = getTextField(formField);
             }
@@ -220,7 +223,7 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
 
     private JComponent getComboBox(FormField formField) {
         ComboName comboName = getField(formField.getClass(), formField.name()).getAnnotation(ComboName.class);
-        ComboBox comboBox = new ComboBox(formField, Cache.getCombo(comboName.value()).toArray(new ICombo[] {}));
+        ComboBox comboBox = new ComboBox(formField, getCombo(comboName.value()).toArray(new ICombo[] {}));
         fieldValues.put(formField, comboBox);
         return comboBox.ui;
     }
@@ -260,21 +263,30 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
     }
 
     protected Box getStringTableField(FormField formField) {
-        final SimpleTableField simpleTableField = new SimpleTableField(formField);
+        final SimpleTableField<String> simpleTableField = new SimpleTableField<>(formField);
         setStandardFocusTraversalKeys(simpleTableField.tableField.table.ui);
         fieldValues.put(formField, simpleTableField);
         return simpleTableField.tableField.ui;
     }
 
-    private JComponent getComboTableField(FormField formField) {
-        // TODO
-        return null;
+    protected JComponent getComboTableField(FormField formField) {
+        ComboName comboName = getField(formField.getClass(), formField.name()).getAnnotation(ComboName.class);
+        ComboTableField comboTableField = new ComboTableField(formField, getCombo(comboName.value()).toArray(new ICombo[] {}));
+        setStandardFocusTraversalKeys(comboTableField.simpleTableField.tableField.table.ui);
+        fieldValues.put(formField, comboTableField);
+        return comboTableField.simpleTableField.tableField.ui;
     }
 
     protected Box getTextFieldList(FormField formField) {
         TextFieldList textFieldList = new TextFieldList(formField);
         fieldValues.put(formField, textFieldList);
         return textFieldList.ui;
+    }
+
+    protected JComponent getPasswordField(FormField formField) {
+        PasswordField passwordField = new PasswordField(formField);
+        fieldValues.put(formField, passwordField);
+        return passwordField.ui;
     }
 
     protected JTextField getTextField(FormField formField) {

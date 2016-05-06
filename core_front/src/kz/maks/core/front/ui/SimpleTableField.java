@@ -2,6 +2,8 @@ package kz.maks.core.front.ui;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import kz.maks.core.front.annotations.Required;
 import kz.maks.core.front.validation.AbstractFieldValidator;
@@ -26,18 +28,14 @@ public class SimpleTableField<T> extends AbstractFieldValidator<List<T>> {
         super(formField);
         boolean isRequired = getField(formField.getClass(), formField.name()).isAnnotationPresent(Required.class);
         String title = isRequired ? "<HTML>" + formField.getTitle() + "<b color=\"red\">*</b></HTML>" : formField.getTitle();
-        tableField = new TableField<>(
-                formField,
-                new IColumn[] {
-                        new Column<>(
-                                SimpleRecord.class,
-                                SimpleRecord.FIELD_NAME,
-                                title,
-                                true,
-                                IColumn.DEFAULT_WIDTH
-                        )
-                }
+        Column<SimpleRecord> column = new Column<>(
+                SimpleRecord.class,
+                SimpleRecord.FIELD_NAME,
+                title,
+                true,
+                IColumn.DEFAULT_WIDTH
         );
+        tableField = new TableField<>(formField, new IColumn[] {column});
         tableField.table.ui.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
@@ -53,19 +51,19 @@ public class SimpleTableField<T> extends AbstractFieldValidator<List<T>> {
 
     @Override
     public List<T> get() {
-        List<T> values = transform(tableField.get(), new Function<SimpleRecord<T>, T>() {
+        List values = transform(tableField.get(), new Function<SimpleRecord<T>, T>() {
             @Override
             public T apply(SimpleRecord<T> simpleRecord) {
                 return simpleRecord.getValue();
             }
         });
-//        Collection<String> filteredValues = filter(values, new Predicate<String>() {
-//            @Override
-//            public boolean apply(String s) {
-//                return !isNullOrEmpty(s);
-//            }
-//        });
-        return Lists.newArrayList(values);
+        Collection<Object> filteredValues = filter(values, new Predicate<Object>() {
+            @Override
+            public boolean apply(Object s) {
+                return (s instanceof String && !isNullOrEmpty((String) s)) || s != null;
+            }
+        });
+        return (List<T>) Lists.newArrayList(filteredValues);
     }
 
     @Override

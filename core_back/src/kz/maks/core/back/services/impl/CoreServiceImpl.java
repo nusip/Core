@@ -17,9 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static kz.maks.core.back.entities.AbstractUserEntity.IDENTIFIER_FIELD;
 import static kz.maks.core.back.entities.AbstractUserEntity.IS_ACTIVE_FIELD;
+import static kz.maks.core.back.entities.AbstractUserEntity.ROOT_USER_IDENTIFIER;
 import static org.hibernate.criterion.Restrictions.eq;
 import static org.hibernate.criterion.Restrictions.isNull;
+import static org.hibernate.criterion.Restrictions.ne;
 
 @Service
 public class CoreServiceImpl extends AbstractServiceImpl implements CoreService {
@@ -84,6 +87,7 @@ public class CoreServiceImpl extends AbstractServiceImpl implements CoreService 
 
         if (AbstractUserEntity.class.isAssignableFrom(comboEntityClass)) {
             criteria.add(eq(IS_ACTIVE_FIELD, true));
+            criteria.add(ne(IDENTIFIER_FIELD, ROOT_USER_IDENTIFIER));
         }
 
         List<ICombo> combos = criteria.list();
