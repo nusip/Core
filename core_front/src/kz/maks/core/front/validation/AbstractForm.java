@@ -1,6 +1,5 @@
 package kz.maks.core.front.validation;
 
-import com.google.common.collect.Sets;
 import kz.maks.core.front.Cache;
 import kz.maks.core.front.FrontUtils;
 import kz.maks.core.front.annotations.*;
@@ -23,6 +22,9 @@ import static java.awt.KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS;
 import static java.awt.KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS;
 import static java.awt.event.InputEvent.SHIFT_DOWN_MASK;
 import static java.awt.event.KeyEvent.VK_TAB;
+import static kz.maks.core.front.ui.Spinner.DECIMAL_MODE;
+import static kz.maks.core.front.ui.Spinner.INT_MODE;
+import static kz.maks.core.shared.Utils.getField;
 import static kz.maks.core.shared.Utils.isDecimalType;
 
 public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
@@ -51,35 +53,59 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
 
         JComponent fieldComponent = null;
 
-        if (Utils.getField(formField.getClass(), formField.name()).isAnnotationPresent(Hidden.class)) {
+        if (getField(formField.getClass(), formField.name()).isAnnotationPresent(Hidden.class)) {
             fieldValues.put(formField, new HiddenField(formField));
             return fieldComponent;
-        } else if (Utils.getField(formField.getClass(), formField.name()).isAnnotationPresent(TreeName.class)) {
-            fieldComponent = getTreeLink(formField);
-        } else if (Utils.getField(formField.getClass(), formField.name()).isAnnotationPresent(ComboName.class)) {
-            fieldComponent = getComboBox(formField);
+
         } else if (String.class.isAssignableFrom(field.getType())) {
-            if (Utils.getField(formField.getClass(), formField.name()).isAnnotationPresent(kz.maks.core.front.annotations.TextArea.class)) {
+
+            if (getField(formField.getClass(), formField.name()).isAnnotationPresent(kz.maks.core.front.annotations.TextArea.class)) {
                 fieldComponent = getTextArea(formField);
             } else {
                 fieldComponent = getTextField(formField);
             }
+
         } else if (Boolean.class.isAssignableFrom(field.getType()) || boolean.class.isAssignableFrom(field.getType())) {
             fieldComponent = getCheckBox(formField);
+
         } else if (Number.class.isAssignableFrom(field.getType())) {
-            fieldComponent = getSpinner(formField, isDecimalType(field.getType()) ? Spinner.DECIMAL_MODE : Spinner.INT_MODE);
+
+            if (Long.class.isAssignableFrom(field.getType())) {
+
+                if (getField(formField.getClass(), formField.name()).isAnnotationPresent(TreeName.class)) {
+                    fieldComponent = getTreeLink(formField);
+
+                } else if (getField(formField.getClass(), formField.name()).isAnnotationPresent(ComboName.class)) {
+                    fieldComponent = getComboBox(formField);
+
+                } else {
+                    fieldComponent = getSpinner(formField, isDecimalType(field.getType()) ? DECIMAL_MODE : INT_MODE);
+                }
+
+            } else {
+                fieldComponent = getSpinner(formField, isDecimalType(field.getType()) ? DECIMAL_MODE : INT_MODE);
+            }
+
         } else if (Date.class.isAssignableFrom(field.getType())) {
             fieldComponent = getDateSpinner(formField);
+
         } else if (field.getType().isEnum()) {
             fieldComponent = getEnumBox(formField, field.getType());
+
         } else if (List.class.isAssignableFrom(field.getType())) {
             ParameterizedType fieldType = (ParameterizedType) field.getGenericType();
             Class<?> componentType = (Class<?>) fieldType.getActualTypeArguments()[0];
 
-            if (componentType == String.class) {
+            if (String.class.isAssignableFrom(componentType)) {
                 fieldComponent = getStringTableField(formField);
+
+            } else if (Long.class.isAssignableFrom(componentType)
+                    && getField(formField.getClass(), formField.name()).isAnnotationPresent(ComboName.class)) {
+
+                fieldComponent = getComboTableField(formField);
+
             } else {
-                return fieldComponent;
+                throw new RuntimeException();
             }
         }
 
@@ -95,7 +121,7 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
 
     protected void processAnnotations() {
         for (FormField formField : formFields) {
-            Field field = Utils.getField(formField.getClass(), formField.name());
+            Field field = getField(formField.getClass(), formField.name());
             ValidatableFieldAccessor validatableFieldAccessor = fieldValues.get(formField);
 
             if (field.isAnnotationPresent(Required.class)) {
@@ -173,7 +199,7 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
 
     protected JLabel getLabel(FormField formField) {
         JLabel label = new JLabel();
-        boolean isRequired = Utils.getField(formField.getClass(), formField.name()).isAnnotationPresent(Required.class);
+        boolean isRequired = getField(formField.getClass(), formField.name()).isAnnotationPresent(Required.class);
 
         if (isRequired) {
             label.setText("<HTML>" + formField.getTitle() + "<b color=\"red\">*</b></HTML>");
@@ -193,7 +219,7 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
     }
 
     private JComponent getComboBox(FormField formField) {
-        ComboName comboName = Utils.getField(formField.getClass(), formField.name()).getAnnotation(ComboName.class);
+        ComboName comboName = getField(formField.getClass(), formField.name()).getAnnotation(ComboName.class);
         ComboBox comboBox = new ComboBox(formField, Cache.getCombo(comboName.value()).toArray(new ICombo[] {}));
         fieldValues.put(formField, comboBox);
         return comboBox.ui;
@@ -234,24 +260,15 @@ public abstract class AbstractForm<T> implements Accessor<T>, Validatable {
     }
 
     protected Box getStringTableField(FormField formField) {
-        boolean isRequired = Utils.getField(formField.getClass(), formField.name()).isAnnotationPresent(Required.class);
-        String title = isRequired ? "<HTML>" + formField.getTitle() + "<b color=\"red\">*</b></HTML>" : formField.getTitle();
-        final SimpleTableField simpleTableField = new SimpleTableField(
-                formField, new Column<>(SimpleRecord.class, SimpleRecord.FIELD_NAME, title, true, IColumn.DEFAULT_WIDTH));
+        final SimpleTableField simpleTableField = new SimpleTableField(formField);
         setStandardFocusTraversalKeys(simpleTableField.tableField.table.ui);
-        simpleTableField.tableField.table.ui.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                simpleTableField.tableField.table.ui.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                simpleTableField.tableField.table.ui.setBorder(null);
-            }
-        });
         fieldValues.put(formField, simpleTableField);
         return simpleTableField.tableField.ui;
+    }
+
+    private JComponent getComboTableField(FormField formField) {
+        // TODO
+        return null;
     }
 
     protected Box getTextFieldList(FormField formField) {

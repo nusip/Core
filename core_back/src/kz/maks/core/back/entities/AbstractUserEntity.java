@@ -19,6 +19,11 @@ public abstract class AbstractUserEntity extends AbstractBaseEntity implements H
     protected Boolean isActive;
 
     @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "users_id"),
+            inverseJoinColumns = @JoinColumn(name = "roles_id")
+    )
     protected List<Role> roles = new ArrayList<>();
 
     public String getIdentifier() {

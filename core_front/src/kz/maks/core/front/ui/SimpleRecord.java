@@ -1,22 +1,22 @@
 package kz.maks.core.front.ui;
 
-public class SimpleRecord {
+public class SimpleRecord<T> {
 
     public static final String FIELD_NAME = "value";
 
-    private String value;
+    private T value;
 
     public SimpleRecord() {}
 
-    public SimpleRecord(String value) {
+    public SimpleRecord(T value) {
         this.value = value;
     }
 
-    public String getValue() {
+    public T getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(T value) {
         this.value = value;
     }
 }

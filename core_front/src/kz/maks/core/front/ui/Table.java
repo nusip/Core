@@ -85,7 +85,10 @@ public class Table<T> implements Accessor<List<T>> {
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 String sValue = getDisplayValue(value);
                 JLabel label = (JLabel) super.getTableCellRendererComponent(table, sValue, isSelected, hasFocus, row, column);
-                label.setToolTipText("<HTML><p width='250px'>" + sValue + "<p><HTML/>");
+                if (sValue != null) {
+                    String sWidth = sValue.length() > 50 ? " width='250px'" : "";
+                    label.setToolTipText("<HTML><p" + sWidth + ">" + sValue + "<p><HTML/>");
+                }
                 return label;
             }
         });
