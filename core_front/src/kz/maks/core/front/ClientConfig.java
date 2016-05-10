@@ -4,11 +4,11 @@ import kz.maks.core.shared.Props;
 
 public class ClientConfig implements IClientConfig {
     private final Class<?> remoteStoreClass;
-    private final boolean cacheTrees;
+    private final boolean useCache;
 
-    public ClientConfig(Class<?> remoteStoreClass, boolean cacheTrees) {
+    public ClientConfig(Class<?> remoteStoreClass, boolean useCache) {
         this.remoteStoreClass = remoteStoreClass;
-        this.cacheTrees = cacheTrees;
+        this.useCache = useCache;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class ClientConfig implements IClientConfig {
 
     @Override
     public boolean useCache() {
-        return cacheTrees;
+        return useCache;
     }
 
     @Override
