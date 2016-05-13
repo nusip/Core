@@ -5,13 +5,14 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 @MappedSuperclass
 public abstract class AbstractBaseEntity implements HasId {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "id_gen")
     protected Long id;
 
     @Override
