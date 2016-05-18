@@ -6,6 +6,7 @@ import kz.maks.core.shared.models.HasId;
 import kz.maks.core.shared.models.HasName;
 import kz.maks.core.shared.models.HasTitle;
 import kz.maks.core.shared.models.ITreeNode;
+import org.apache.log4j.Logger;
 import org.reflections.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -30,6 +31,8 @@ public class Utils {
     public static final int ONE_DAY = ONE_HOUR * 24;
     public static final int ONE_WEEK = ONE_DAY * 7;
     public static final int ONE_MONTH = ONE_DAY * 30;
+
+    private static Logger log = Logger.getLogger(Utils.class);
 
     public static boolean isDecimalType(Class<?> clazz) {
         return Double.class.isAssignableFrom(clazz) || BigDecimal.class.isAssignableFrom(clazz);
@@ -160,6 +163,7 @@ public class Utils {
 
             } catch (Exception e) {
                 if (exceptionClass.isAssignableFrom(e.getClass())) {
+                    log.error(null, e);
                     e.printStackTrace();
                     continue;
                 }

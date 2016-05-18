@@ -1,6 +1,6 @@
 package kz.maks.core.back.services.interceptors;
 
-import kz.maks.core.back.annotations.Bean;
+import org.apache.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -12,6 +12,8 @@ public class TracingInterceptor implements Interceptor {
     private static final String TRACE_FORMAT_END = "TRACE [%d] %s %s.%s() END";
 
     private static TracingInterceptor instance;
+
+    private static Logger log = Logger.getLogger(TracingInterceptor.class);
 
     private TracingInterceptor() {}
 
@@ -27,7 +29,7 @@ public class TracingInterceptor implements Interceptor {
         String sDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
         String trace = String.format(TRACE_FORMAT_START,
                 Thread.currentThread().getId(), sDateTime, obj.getClass().getName(), method.getName());
-        System.out.println(trace);
+        log.info(trace);
     }
 
     @Override
@@ -35,7 +37,7 @@ public class TracingInterceptor implements Interceptor {
         String sDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
         String trace = String.format(TRACE_FORMAT_END,
                 Thread.currentThread().getId(), sDateTime, obj.getClass().getName(), method.getName());
-        System.out.println(trace);
+        log.info(trace);
     }
 
 }

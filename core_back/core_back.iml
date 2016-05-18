@@ -19,6 +19,7 @@
           <root url="jar://$USER_HOME$/.ideaLibSources/hibernate-envers-4.1.4.Final-sources.jar!/" />
           <root url="jar://$USER_HOME$/.ideaLibSources/hibernate-core-5.0.6.Final-sources.jar!/" />
           <root url="jar://$USER_HOME$/.ideaLibSources/jsoup-1.8.3-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.ideaLibSources/log4j-1.2.17-sources.jar!/" />
         </SOURCES>
         <jarDirectory url="file://$MODULE_DIR$/libs" recursive="false" />
       </library>
