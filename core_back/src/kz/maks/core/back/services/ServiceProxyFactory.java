@@ -4,12 +4,15 @@ import com.google.common.base.Joiner;
 import kz.maks.core.back.services.interceptors.Interceptor;
 import kz.maks.core.back.services.interceptors.TracingInterceptor;
 import kz.maks.core.back.services.interceptors.TransactionInterceptorFactory;
+import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public class ServiceProxyFactory {
+
+    private static Logger log = Logger.getLogger(ServiceProxyFactory.class);
 
     private static final Interceptor[] INTERCEPTORS = new Interceptor[] {
             TracingInterceptor.getInstance(),
@@ -33,8 +36,9 @@ public class ServiceProxyFactory {
                             result = method.invoke(obj, args);
 
                         } catch (Exception e) {
-                            System.err.println("EXCEPTION IN " + method.getDeclaringClass().getName() + "."
-                                    + method.getName() + " with arguments: " + Joiner.on(", ").useForNull("null").join(args));
+                            log.error("EXCEPTION IN " + method.getDeclaringClass().getName() + "."
+                                    + method.getName() + " with arguments: "
+                                    + Joiner.on(", ").useForNull("null").join(args), e);
                             throw e;
                         }
 

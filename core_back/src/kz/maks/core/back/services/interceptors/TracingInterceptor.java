@@ -8,8 +8,8 @@ import java.util.Date;
 
 public class TracingInterceptor implements Interceptor {
 
-    private static final String TRACE_FORMAT_START = "TRACE [%d] %s %s.%s() START";
-    private static final String TRACE_FORMAT_END = "TRACE [%d] %s %s.%s() END";
+    private static final String TRACE_FORMAT_START = "%s.%s() START";
+    private static final String TRACE_FORMAT_END = "%s.%s() END";
 
     private static TracingInterceptor instance;
 
@@ -26,17 +26,13 @@ public class TracingInterceptor implements Interceptor {
 
     @Override
     public void executeBefore(Object obj, Method method, Object[] args) {
-        String sDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-        String trace = String.format(TRACE_FORMAT_START,
-                Thread.currentThread().getId(), sDateTime, obj.getClass().getName(), method.getName());
+        String trace = String.format(TRACE_FORMAT_START, obj.getClass().getName(), method.getName());
         log.info(trace);
     }
 
     @Override
     public void executeAfter(Object obj, Method method, Object[] args) {
-        String sDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-        String trace = String.format(TRACE_FORMAT_END,
-                Thread.currentThread().getId(), sDateTime, obj.getClass().getName(), method.getName());
+        String trace = String.format(TRACE_FORMAT_END, obj.getClass().getName(), method.getName());
         log.info(trace);
     }
 

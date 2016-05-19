@@ -1,15 +1,18 @@
 package kz.maks.core.front;
 
 import kz.maks.core.front.services.CoreRemotes;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
 import java.net.MalformedURLException;
 import java.rmi.*;
 
 public abstract class BaseClient {
 
     protected final IClientConfig config;
+
+    private Logger log = Logger.getLogger(BaseClient.class);
 
     public BaseClient(IClientConfig clientConfig) {
         this.config = clientConfig;
@@ -48,7 +51,7 @@ public abstract class BaseClient {
                     field.setAccessible(true);
                 }
 
-                field.set(null, getRemote(remoteClass));
+                field.set(null, getRemoteProxy(remoteClass));
 
                 if (wasNotAccessible) {
                     field.setAccessible(false);
@@ -60,11 +63,36 @@ public abstract class BaseClient {
         }
     }
 
+    private <T extends Remote> T getRemoteProxy(final Class<T> iface) {
+        final Object[] remote = {getRemote(iface)};
+
+        T proxy = (T) Proxy.newProxyInstance(remote[0].getClass().getClassLoader(), remote[0].getClass().getInterfaces(), new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                try {
+                    return method.invoke(remote[0], args);
+
+                } catch (InvocationTargetException e) {
+                    if (e.getCause() instanceof ConnectException) {
+                        remote[0] = getRemote(iface);
+                        return null;
+
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+        });
+
+        return proxy;
+    }
+
     private <T extends Remote> T getRemote(Class<T> iface) {
         try {
             return (T) Naming.lookup("//" + config.rmiRemoteHost() + ":" + config.rmiRemotePort() + "/" + iface.getSimpleName());
 
-        } catch (NotBoundException | MalformedURLException | RemoteException e) {
+        } catch (RemoteException | MalformedURLException | NotBoundException e) {
+            log.error(null, e);
             throw new RuntimeException(e);
         }
     }
