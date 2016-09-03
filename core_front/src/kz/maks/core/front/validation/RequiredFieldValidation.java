@@ -19,7 +19,7 @@ public class RequiredFieldValidation implements FieldValidation {
         }
 
         if (value instanceof Integer) {
-            if (value == 0)
+            if ((Integer)value == 0)
                 return error;
         }
 
